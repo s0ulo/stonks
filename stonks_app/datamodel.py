@@ -3,61 +3,61 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 
-class historical_prices(db.Model):
+class Historical_prices(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    ticker = db.Column(db.String, unique=True, nullable=False)
+    ticker = db.Column(db.String, nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     price_close = db.Column(db.Float, nullable=False)
     price_open = db.Column(db.Float, nullable=True)
     price_high = db.Column(db.Float, nullable=True)
     price_low = db.Column(db.Float, nullable=True)
-    price_volume = db.Column(db.Float, nullable=True)
+    volume = db.Column(db.Float, nullable=True)
 
     def __repr__(self):
-        return '<historical_prices {} {} {}>'.format(self.ticker, self.date, self.price_close)
+        return f"<historical_prices {self.date} {self.ticker} {self.price_close}>"
 
 
-class stocks_attributes(db.Model):
+class Stocks_attributes(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     stock_name = db.Column(db.String, unique=True, nullable=False)
     ticker = db.Column(db.String, unique=True, nullable=False)
-    stock_exchange_name = db.Column(db.String, unique=True, nullable=False)
-    sector_id = db.Column(db.Integer, unique=True, nullable=False)
-    country_id = db.Column(db.String, unique=True, nullable=False)
+    stock_exchange_name = db.Column(db.String, nullable=False)
+    sector_id = db.Column(db.Integer, nullable=False)
+    country_id = db.Column(db.String, nullable=False)
 
     def __repr__(self):
-        return '<stock_attributes {} {}>'.format(self.stock_name, self.ticker)
+        return f"<stock_attributes {self.stock_name} {self.ticker} {self.sector_id}>"
 
 
-class peers(db.Model):
+class Peers(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     ticker = db.Column(db.String, nullable=False)
     peer_id = db.Column(db.Integer, nullable=True)
 
     def __repr__(self):
-        return '<peers {} {}>'.format(self.ticker, self.peer_id)
+        return f"<peers {self.ticker} {self.peer_id}>"
 
 
-class countries(db.Model):
+class Countries(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     country = db.Column(db.String, unique=True, nullable=False)
 
     def __repr__(self):
-        return '<countries {}>'.format(self.country)
+        return f"<countries {self.id} {self.country}>"
 
 
-class sectors(db.Model):
+class Sectors(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     sector_name = db.Column(db.String, nullable=False)
     industry_id = db.Column(db.Integer, nullable=False)
 
     def __repr__(self):
-        return '<sectors {} {}>'.format(self.sector_name, self.industry_id)
+        return f"<sectors {self.id} {self.sector_name} {self.industry_id}>"
 
 
-class industries(db.Model):
+class Industries(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     industry_name = db.Column(db.String, nullable=False)
 
     def __repr__(self):
-        return '<industries {}>'.format(self.industry_name)
+        return f"<industries {self.industry_name}>"
