@@ -162,12 +162,7 @@ def store_peers(tckr, data):
             db.session.add(prs)
             db.session.commit()
         else:
-            get_rest_of_data(i)
-            prs = Peers(ticker=tckr,
-                peer_id=Stocks_attributes.query.filter(
-                    Stocks_attributes.ticker == i).first().id)
-            db.session.add(prs)
-            db.session.commit()
+            continue
 
 
 # запрос лимита сообщений в АПИ

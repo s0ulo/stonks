@@ -8,5 +8,10 @@
 <div class="container">
     <h1>{{title}}</h1>
     <p>{{description}}</p>
+    {% for ticker in stock_attr_list %}
+        <h3><a href={{ url_for('plotlygraphs', id=ticker.ticker) }}>{{ticker.ticker}}</a></h3>
+        <p>{{ticker.stock_name}}</p>
+        <hr/>
+    {% endfor%}
 </div>
 {% endblock %}
