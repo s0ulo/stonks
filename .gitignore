@@ -5,6 +5,7 @@
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+.vscode/
 
 ### Flask ###
 instance/*
@@ -199,3 +200,13 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+
+#database
+*.db
+
+#configuration file
+config.py
+
+#temp files
+test.py
+nasdaqlisted.txt
