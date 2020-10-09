@@ -174,16 +174,16 @@ def store_peers(tckr, data):
 # чтобы перейти из снадбокса в прод надо
 # поменять УРЛ на https://cloud.iexapis.com/stable/account/metadata
 # поменять токен на SK_IEX_TOKEN
-def messages_left():
-    usage_url = 'https://cloud.iexapis.com/stable/account/usage/messages'
+def is_limit_exceeded():
     metadata_url = 'https://cloud.iexapis.com/stable/account/metadata'
     params = {
         'token': current_app.config['SK_IEX_TOKEN']
     }
-    messages_spent = requests.get(usage_url, params=params).json()
-    current_messages_limit = requests.get(metadata_url, params=params).json()
-    messages_limit = int(messages_spent['monthlyUsage'])
-    return messages_limit
+    messages = requests.get(metadata_url, params=params).json()
+    messages_left = int(messages['messageLimit']) - int(messages_spent['messagesUsed'])
+    if messages_left < MESSAGES_FOR_1_TICKER:
+        return True
+    return False
 
 
 # запускаем скачивание данных.
@@ -196,8 +196,7 @@ with app.app_context():
 
     tckrlst = ticker_list[1:]
     for t in tckrlst:
-        stop = messages_left()
-        if stop < 3100:
+        if is_limit_exceeded():
             break
         get_historical_prices(t)
         get_rest_of_data(t)
