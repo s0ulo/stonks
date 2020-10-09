@@ -1,8 +1,8 @@
 import requests
 from stonks_app.datamodel import (
     db,
-    Historical_prices,
-    Stocks_attributes,
+    HistoricalPrices,
+    StocksAttributes,
     Peers,
     Countries,
     Sectors,
@@ -22,9 +22,9 @@ from flask import current_app
 # поменять токен на SK_IEX_TOKEN
 def get_historical_prices(tckr):
     hist_prices_url = \
-        f'https://sandbox.iexapis.com/stable/stock/{tckr}/chart/1y'
+        f'https://cloud.iexapis.com/stable/stock/{tckr}/chart/1y'
     params = {
-        'token': current_app.config['TSK_IEX_TOKEN']
+        'token': current_app.config['SK_IEX_TOKEN']
     }
     data = requests.get(hist_prices_url, params=params)
     data.raise_for_status()
@@ -39,7 +39,7 @@ def get_historical_prices(tckr):
 def store_hist_prices(tckr, data):
     for i in data:
         i["date"] = datetime.strptime(i["date"], "%Y-%m-%d")
-        hist_prices = Historical_prices(
+        hist_prices = HistoricalPrices(
             ticker=tckr,
             date=i["date"],
             price_close=i["close"],
@@ -60,16 +60,16 @@ def store_hist_prices(tckr, data):
 # поменять токен на SK_IEX_TOKEN
 def get_rest_of_data(tckr):
     rest_of_data_url = \
-        f'https://sandbox.iexapis.com/stable/stock/{tckr}/company'
+        f'https://cloud.iexapis.com/stable/stock/{tckr}/company'
     params = {
-        'token': current_app.config['TSK_IEX_TOKEN']
+        'token': current_app.config['SK_IEX_TOKEN']
     }
     data = requests.get(rest_of_data_url, params=params)
     data.raise_for_status()
     data = data.json()
-    store_countries(tckr, data)
-    store_industries(tckr, data)
-    store_sectores(tckr, data)
+    store_countries(data)
+    store_industries(data)
+    store_sectores(data)
     store_stock_attrs(tckr, data)
 
 
@@ -77,10 +77,10 @@ def get_rest_of_data(tckr):
 # в началае проверяем на дубликаты
 # ID стран и секторов тянем из других таблиц
 def store_stock_attrs(tckr, data):
-    stock_exists = Stocks_attributes.query.filter(
-        Stocks_attributes.ticker == tckr).count()
+    stock_exists = StocksAttributes.query.filter(
+        StocksAttributes.ticker == tckr).count()
     if not stock_exists:
-        stock_attrs = Stocks_attributes(
+        stock_attrs = StocksAttributes(
             stock_name=data["companyName"],
             ticker=tckr,
             stock_exchange_name=data["exchange"],
@@ -94,7 +94,7 @@ def store_stock_attrs(tckr, data):
 
 # сохранение индустрий в БД
 # в началае проверяем на дубликаты
-def store_industries(tckr, data):
+def store_industries(data):
     industry_exists = Industries.query.filter(
         Industries.industry_name == data["industry"]).count()
     if not industry_exists:
@@ -106,7 +106,7 @@ def store_industries(tckr, data):
 # сохранение секторов в БД
 # в началае проверяем на дубликаты
 # ID синдустрий тянем из других таблиц
-def store_sectores(tckr, data):
+def store_sectores(data):
     sector_exists = Sectors.query.filter(
         Sectors.sector_name == data["sector"]).count()
     if not sector_exists:
@@ -120,7 +120,7 @@ def store_sectores(tckr, data):
 
 # сохранение стран в БД
 # в началае проверяем на дубликаты
-def store_countries(tckr, data):
+def store_countries(data):
     country_exists = Countries.query.filter(
         Countries.country == data["country"]).count()
     if not country_exists:
@@ -135,9 +135,9 @@ def store_countries(tckr, data):
 # поменять УРЛ на https://cloud.iexapis.com/stable/stock/{tckr}/peers
 # поменять токен на SK_IEX_TOKEN
 def get_peers(tckr):
-    peers_url = f'https://sandbox.iexapis.com/stable/stock/{tckr}/peers'
+    peers_url = f'https://cloud.iexapis.com/stable/stock/{tckr}/peers'
     params = {
-        'token': current_app.config['TSK_IEX_TOKEN']
+        'token': current_app.config['SK_IEX_TOKEN']
     }
     data = requests.get(peers_url, params=params)
     data.raise_for_status()
@@ -153,16 +153,21 @@ def get_peers(tckr):
 # и потом уже сохраняем
 def store_peers(tckr, data):
     for i in data:
-        peer_exists = Stocks_attributes.query.filter(
-            Stocks_attributes.ticker == i).count()
+        peer_exists = StocksAttributes.query.filter(
+            StocksAttributes.ticker == i).count()
         if peer_exists == 1:
             prs = Peers(ticker=tckr,
-                peer_id=Stocks_attributes.query.filter(
-                    Stocks_attributes.ticker == i).first().id)
+                peer_id=StocksAttributes.query.filter(
+                    StocksAttributes.ticker == i).first().id)
             db.session.add(prs)
             db.session.commit()
         else:
-            continue
+            get_rest_of_data(i)
+            prs = Peers(ticker=tckr,
+                peer_id=StocksAttributes.query.filter(
+                    StocksAttributes.ticker == i).first().id)
+            db.session.add(prs)
+            db.session.commit()
 
 
 # запрос лимита сообщений в АПИ
@@ -170,9 +175,9 @@ def store_peers(tckr, data):
 # поменять УРЛ на https://cloud.iexapis.com/stable/account/metadata
 # поменять токен на SK_IEX_TOKEN
 def messages_left():
-    metadata_url = 'https://sandbox.iexapis.com/stable/account/metadata'
+    metadata_url = 'https://cloud.iexapis.com/stable/account/metadata'
     params = {
-        'token': current_app.config['TSK_IEX_TOKEN']
+        'token': current_app.config['SK_IEX_TOKEN']
     }
     messages = requests.get(metadata_url, params=params)
     messages = messages.json()
@@ -188,15 +193,14 @@ def messages_left():
 app = create_app()
 with app.app_context():
 
-    tckrlst = ticker_list
+    tckrlst = ticker_list[1:]
     for t in tckrlst:
         stop = messages_left()
         if stop < 3100:
             break
         get_historical_prices(t)
         get_rest_of_data(t)
-        get_peers(t)
         countdown = len(ticker_list) - (ticker_list.index(t)) + 1
         print(
-            f"{t} data saved, {str(countdown)} stocks remained, {stop} messages remained"
+            f"{t} data saved, {str(countdown)} stonks remained, {stop} messages remained"
             )
