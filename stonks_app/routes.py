@@ -2,7 +2,7 @@
 
 from flask import current_app as app
 from flask import render_template
-from stonks_app.datamodel import db, Stocks_attributes, Historical_prices
+from stonks_app.datamodel import StocksAttributes, HistoricalPrices
 import plotly
 import plotly.graph_objs as go
 import plotly.express as px
@@ -24,7 +24,7 @@ def home():
         nav=nav,
         title="Stonks First Steps Demo",
         description="Hello! I use page templates with Flask & Jinja.",
-        stock_attr_list=Stocks_attributes.query.all(),
+        stock_attr_list=StocksAttributes.query.all(),
     )
 
 @app.route("/<string:id>")
@@ -34,7 +34,7 @@ def plotlygraphs(id):
         {"name": "Home", "url": "/"},
         {"name": "About", "url": "https://example.com/2"}
     ]
-    ticker_name = Stocks_attributes.query.filter(Stocks_attributes.ticker == id).first().stock_name
+    ticker_name = StocksAttributes.query.filter(StocksAttributes.ticker == id).first().stock_name
 
     return render_template(
         "plotlygraphs.html",
@@ -45,19 +45,19 @@ def plotlygraphs(id):
     )
 
 def create_plot(ticker):
-    df1 = pd.DataFrame(Historical_prices.query.filter(Historical_prices.ticker == ticker).with_entities(Historical_prices.date, Historical_prices.price_high))
-    df2 = pd.DataFrame(Historical_prices.query.filter(Historical_prices.ticker == ticker).with_entities(Historical_prices.date, Historical_prices.price_low))
+    df1 = pd.DataFrame(HistoricalPrices.query.filter(HistoricalPrices.ticker == ticker).with_entities(HistoricalPrices.date, HistoricalPrices.price_high))
+    df2 = pd.DataFrame(HistoricalPrices.query.filter(HistoricalPrices.ticker == ticker).with_entities(HistoricalPrices.date, HistoricalPrices.price_low))
 
     data = [
         go.Scatter(
             x=df1["date"], 
             y=df1["price_high"],
-            name='High ' + Stocks_attributes.query.filter(Stocks_attributes.ticker == ticker).first().stock_name
+            name='High ' + StocksAttributes.query.filter(StocksAttributes.ticker == ticker).first().stock_name
         ),
         go.Scatter(
             x=df2["date"], 
             y=df2["price_low"],
-            name='Low ' + Stocks_attributes.query.filter(Stocks_attributes.ticker == ticker).first().stock_name
+            name='Low ' + StocksAttributes.query.filter(StocksAttributes.ticker == ticker).first().stock_name
         )
     ]
 

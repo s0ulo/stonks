@@ -14,15 +14,18 @@ from datetime import datetime
 from top50_stocks import ticker_list  # импортируем список топ 50 компаний
 from flask import current_app
 
+'''link_env = 'sandbox'
+params = {
+        'token': current_app.config['TSK_IEX_TOKEN']
+}'''
+
 
 def get_from_api(tckr, extension):
     """
     Дергаем API, сохраняем ответ в `data`
     """
-    api_url = f'https://sandbox.iexapis.com/stable/stock/{tckr}/{extension}'
-    params = {
-        'token': current_app.config['TSK_IEX_TOKEN']
-    }
+    global params, link_env
+    api_url = f'https://{link_env}.iexapis.com/stable/stock/{tckr}/{extension}'
     data = requests.get(api_url, params=params)
     data.raise_for_status()
     data = data.json()
@@ -189,16 +192,23 @@ def store_peers(tckr, data):
 # поменять УРЛ на https://cloud.iexapis.com/stable/account/metadata
 # поменять токен на SK_IEX_TOKEN
 def is_limit_exceeded():
-    metadata_url = 'https://cloud.iexapis.com/stable/account/metadata'
-    params = {
-        'token': current_app.config['SK_IEX_TOKEN']
-    }
+    global params, link_env
+    metadata_url = f'https://{link_env}.iexapis.com/stable/account/metadata'
     messages = requests.get(metadata_url, params=params).json()
     messages_left = int(messages['messageLimit']) \
         - int(messages['messagesUsed'])
-    if messages_left < MESSAGES_FOR_1_TICKER:
+    if messages_left < current_app.config['MESSAGES_FOR_1_TICKER']:
         return True
     return False
+
+
+def limit_exceeded():
+    global params, link_env
+    metadata_url = f'https://{link_env}.iexapis.com/stable/account/metadata'
+    messages = requests.get(metadata_url, params=params).json()
+    messages_left = int(messages['messageLimit']) \
+        - int(messages['messagesUsed'])
+    return messages_left
 
 
 # запускаем скачивание данных.
@@ -209,11 +219,18 @@ def is_limit_exceeded():
 app = create_app()
 with app.app_context():
 
-    tckrlst = ticker_list[1:]
+    link_env = 'sandbox'
+    params = {
+            'token': current_app.config['TSK_IEX_TOKEN']
+    }
+    tckrlst = ticker_list
     for ticker in tckrlst:
         if is_limit_exceeded():
+            countdown_messages = limit_exceeded()
+            print(f'Превышен лимит запросов, осталось {str(countdown_messages)}')
             break
         get_historical_prices(ticker)
         get_rest_of_data(ticker)
-        countdown = len(ticker_list) - (ticker_list.index(ticker)) + 1
-        print(f"{ticker} data saved, {str(countdown)} stonks remained")
+        countdown_tickers = len(ticker_list) - (ticker_list.index(ticker)) + 1
+        countdown_messages = limit_exceeded()
+        print(f"{ticker} data saved, {str(countdown_tickers)} stonks remained, {str(countdown_messages)} messages remained.")
