@@ -221,7 +221,7 @@ with app.app_context():
 
     link_env = 'sandbox'
     params = {
-            'token': current_app.config['TSK_IEX_TOKEN']
+        'token': current_app.config['TSK_IEX_TOKEN']
     }
     tckrlst = ticker_list
     for ticker in tckrlst:

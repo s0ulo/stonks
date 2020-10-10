@@ -11,6 +11,7 @@ import json
 import numpy as np
 import pandas as pd
 
+
 @app.route("/")
 def home():
     """Landing page."""
@@ -26,6 +27,7 @@ def home():
         description="Hello! I use page templates with Flask & Jinja.",
         stock_attr_list=StocksAttributes.query.all(),
     )
+
 
 @app.route("/<string:id>")
 def plotlygraphs(id):
@@ -43,6 +45,7 @@ def plotlygraphs(id):
         ticker_name=ticker_name,
         plot=create_plot(id)
     )
+
 
 def create_plot(ticker):
     df1 = pd.DataFrame(HistoricalPrices.query.filter(HistoricalPrices.ticker == ticker).with_entities(HistoricalPrices.date, HistoricalPrices.price_high))

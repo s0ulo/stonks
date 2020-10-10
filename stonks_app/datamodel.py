@@ -12,10 +12,12 @@ class HistoricalPrices(db.Model):
     price_high = db.Column(db.Float, nullable=True)
     price_low = db.Column(db.Float, nullable=True)
     volume = db.Column(db.Float, nullable=True)
-    db.UniqueConstraint('ticker', 'date')
+    db.UniqueConstraint("ticker", "date")
 
     def __repr__(self):
-        return f"<historical_prices {self.date} {self.ticker} {self.price_close}>"
+        return (
+            f"<historical_prices {self.date} {self.ticker} {self.price_close}>"
+        )
 
 
 class StocksAttributes(db.Model):
