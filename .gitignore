@@ -208,5 +208,5 @@ $RECYCLE.BIN/
 config.py
 
 #temp files
-test.py
+test*.py
 nasdaqlisted.txt
