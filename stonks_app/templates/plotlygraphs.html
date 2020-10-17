@@ -4,6 +4,8 @@
 <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 {% endblock %}
 
+{% include 'navigation.html' %}
+
 {% block content %}
 <div class="container-fluid my-3">
   <a href="{{ url_for('home') }}">
@@ -32,7 +34,13 @@
           </div>
         </div>
       </div>
-      <!-- Second area is Bootstrap's CARD element -->
+    </div>
+  </div>
+
+  <!-- second row with one chart -->
+  <div class="row">
+    <!-- single scatter chart area -->
+    <div class="col-12">
       <div class="card mb-4">
         <!-- Chart title (card header) -->
         <div class="card-header">
@@ -51,8 +59,8 @@
         </div>
       </div>
     </div>
-    <!-- end of chart area -->
+    <!-- end of scatter chart area -->
   </div>
-  <!-- end of first row -->
+  <!-- end of second row -->
 </div>
 {% endblock %}

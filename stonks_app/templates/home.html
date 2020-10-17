@@ -4,7 +4,10 @@
 <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 {% endblock %}
 
+{% include 'navigation.html' %}
+
 {% block content %}
+
   <!-- first row with one chart -->
   <div class="row">
     {% for ticker in stock_attr_list %}
