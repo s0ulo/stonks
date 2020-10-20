@@ -36,7 +36,8 @@ def plotlygraphs(id):
         {"name": "Home", "url": "/"},
         {"name": "About", "url": "https://example.com/2"}
     ]
-    ticker_name = StocksAttributes.query.filter(StocksAttributes.ticker == id).first().stock_name
+    ticker_name = StocksAttributes.query.filter(
+        StocksAttributes.ticker == id).first().stock_name
 
     return render_template(
         "plotlygraphs.html",
@@ -48,19 +49,33 @@ def plotlygraphs(id):
 
 
 def create_plot(ticker):
-    df1 = pd.DataFrame(HistoricalPrices.query.filter(HistoricalPrices.ticker == ticker).with_entities(HistoricalPrices.date, HistoricalPrices.price_high))
-    df2 = pd.DataFrame(HistoricalPrices.query.filter(HistoricalPrices.ticker == ticker).with_entities(HistoricalPrices.date, HistoricalPrices.price_low))
+    df1 = pd.DataFrame(
+        HistoricalPrices.query.filter(
+            HistoricalPrices.ticker == ticker
+        ).with_entities(
+            HistoricalPrices.date, HistoricalPrices.price_high
+        )
+    )
+    df2 = pd.DataFrame(
+        HistoricalPrices.query.filter(
+            HistoricalPrices.ticker == ticker
+        ).with_entities(
+            HistoricalPrices.date, HistoricalPrices.price_low
+        )
+    )
 
     data = [
         go.Scatter(
             x=df1["date"], 
             y=df1["price_high"],
-            name='High ' + StocksAttributes.query.filter(StocksAttributes.ticker == ticker).first().stock_name
+            name='High ' + StocksAttributes.query.filter(
+                StocksAttributes.ticker == ticker).first().stock_name
         ),
         go.Scatter(
             x=df2["date"], 
             y=df2["price_low"],
-            name='Low ' + StocksAttributes.query.filter(StocksAttributes.ticker == ticker).first().stock_name
+            name='Low ' + StocksAttributes.query.filter(
+                StocksAttributes.ticker == ticker).first().stock_name
         )
     ]
 

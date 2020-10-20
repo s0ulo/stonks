@@ -10,23 +10,22 @@ from stonks_app.datamodel import (
     Industries,
 )  # импортируем модель данных
 from stonks_app import create_app
+from stonks_app import config
 from datetime import datetime
 from top50_stocks import ticker_list  # импортируем список топ 50 компаний
 from flask import current_app
 
-'''link_env = 'sandbox'
-params = {
-        'token': current_app.config['TSK_IEX_TOKEN']
-}'''
+
+PARAMS = { 'token': config.TSK_IEX_TOKEN }
+LINK_ENV = 'sandbox'
 
 
 def get_from_api(tckr, extension):
     """
     Дергаем API, сохраняем ответ в `data`
     """
-    global params, link_env
-    api_url = f'https://{link_env}.iexapis.com/stable/stock/{tckr}/{extension}'
-    data = requests.get(api_url, params=params)
+    api_url = f'https://{LINK_ENV}.iexapis.com/stable/stock/{tckr}/{extension}'
+    data = requests.get(api_url, params=PARAMS)
     data.raise_for_status()
     data = data.json()
     return data
@@ -86,9 +85,6 @@ def get_rest_of_data(tckr):
 # в началае проверяем на дубликаты
 # ID стран и секторов тянем из других таблиц
 def store_stock_attrs(tckr, data):
-    # stock_exists = StocksAttributes.query.filter(
-    #     StocksAttributes.ticker == tckr).count()
-    # if not stock_exists:
     try:
         stock_attrs = StocksAttributes(
             stock_name=data["companyName"],
@@ -107,9 +103,6 @@ def store_stock_attrs(tckr, data):
 # сохранение индустрий в БД
 # в началае проверяем на дубликаты
 def store_industries(data):
-    # industry_exists = Industries.query.filter(
-    #     Industries.industry_name == data["industry"]).count()
-    # if not industry_exists:
     try:
         indstr = Industries(industry_name=data["industry"])
         db.session.add(indstr)
@@ -122,9 +115,6 @@ def store_industries(data):
 # в началае проверяем на дубликаты
 # ID синдустрий тянем из других таблиц
 def store_sectores(data):
-    # sector_exists = Sectors.query.filter(
-    #     Sectors.sector_name == data["sector"]).count()
-    # if not sector_exists:
     try:
         sctrs = Sectors(
             sector_name=data["sector"],
@@ -139,9 +129,6 @@ def store_sectores(data):
 # сохранение стран в БД
 # в началае проверяем на дубликаты
 def store_countries(data):
-    # country_exists = Countries.query.filter(
-    #     Countries.country == data["country"]).count()
-    # if not country_exists:
     try:
         cntrs = Countries(country=data["country"])
         db.session.add(cntrs)
@@ -192,9 +179,8 @@ def store_peers(tckr, data):
 # поменять УРЛ на https://cloud.iexapis.com/stable/account/metadata
 # поменять токен на SK_IEX_TOKEN
 def is_limit_exceeded():
-    global params, link_env
-    metadata_url = f'https://{link_env}.iexapis.com/stable/account/metadata'
-    messages = requests.get(metadata_url, params=params).json()
+    metadata_url = f'https://{LINK_ENV}.iexapis.com/stable/account/metadata'
+    messages = requests.get(metadata_url, params=PARAMS).json()
     messages_left = int(messages['messageLimit']) \
         - int(messages['messagesUsed'])
     if messages_left < current_app.config['MESSAGES_FOR_1_TICKER']:
@@ -203,9 +189,8 @@ def is_limit_exceeded():
 
 
 def limit_exceeded():
-    global params, link_env
-    metadata_url = f'https://{link_env}.iexapis.com/stable/account/metadata'
-    messages = requests.get(metadata_url, params=params).json()
+    metadata_url = f'https://{LINK_ENV}.iexapis.com/stable/account/metadata'
+    messages = requests.get(metadata_url, params=PARAMS).json()
     messages_left = int(messages['messageLimit']) \
         - int(messages['messagesUsed'])
     return messages_left
@@ -218,11 +203,6 @@ def limit_exceeded():
 # скачивания полной инфы про 1 акцию - прерываем
 app = create_app()
 with app.app_context():
-
-    link_env = 'sandbox'
-    params = {
-        'token': current_app.config['TSK_IEX_TOKEN']
-    }
     tckrlst = ticker_list
     for ticker in tckrlst:
         if is_limit_exceeded():
