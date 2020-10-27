@@ -34,7 +34,7 @@
           <tbody>
             {% for ticker in stock_attr_list %}
             <tr>
-              <td><a href={{ url_for('plotlygraphs', id=ticker.ticker) }}>
+              <td><a href={{ url_for('stonk.plotlygraphs', id=ticker.ticker) }}>
                 {{ticker.ticker}}</a></td>
               <td>{{ticker.stock_name}}</td>
               <td>{{ticker.stock_exchange_name}}</td>

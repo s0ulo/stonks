@@ -38,7 +38,7 @@
                       {% for message in messages %} {{ message }} {% endfor %}
                     </div>
                     {% endif %} {% endwith %}
-                    <form action="{{ url_for('process_login') }}" method="POST">
+                    <form action="{{ url_for('user.process_login') }}" method="POST">
                       {{ form.hidden_tag() }}
                       <div class="form-group">
                         {{ form.username.label(class_="small mb-1") }} {{
@@ -51,7 +51,7 @@
                       <div class="form-group">
                         <div class="custom-control custom-checkbox">
                           {{ form.remember_me() }} {{
-                          form.remember_me.label(class_='form-check-label') }}
+                          form.remember_me.label(class_="form-check-label") }}
                         </div>
                       </div>
                       <div
