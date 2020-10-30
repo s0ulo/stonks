@@ -26,8 +26,8 @@
               <th>Stock Name</th>
               <th>Ticker</th>
               <th>Stock Exch Name</th>
-              <th>Sector ID</th>
-              <th>Country ID</th>
+              <th>Sector</th>
+              <th>Country</th>
             </tr>
           </thead>
           <!-- Insert Jinja template for data filling -->
@@ -38,8 +38,8 @@
                 {{ticker.ticker}}</a></td>
               <td>{{ticker.stock_name}}</td>
               <td>{{ticker.stock_exchange_name}}</td>
-              <td>{{ticker.sector_id}}</td>
-              <td>{{ticker.country_id}}</td>
+              <td>{{ticker.sector_name}}</td>
+              <td>{{ticker.country}}</td>
             </tr>
             {% endfor %}                                   
           </tbody>

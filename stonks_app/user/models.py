@@ -14,6 +14,9 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(128))
     role = db.Column(db.String(10), index=True)
     joined_at = db.Column(db.DateTime(), default=datetime.utcnow, index=True)
+    email = db.Column(db.String(50), index=True, unique=True)
+    firstname = db.Column(db.String(50), index=True)
+    lastname = db.Column(db.String(50), index=True)
 
     @property
     def is_admin(self):

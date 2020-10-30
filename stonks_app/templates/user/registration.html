@@ -9,7 +9,7 @@
     />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Login</title>
+    <title>Registration</title>
     <link
       href="{{ url_for('static', filename='css/style.css') }}"
       rel="stylesheet"
@@ -29,7 +29,7 @@
               <div class="col-lg-5">
                 <div class="card shadow-lg border-0 rounded-lg mt-5">
                   <div class="card-header">
-                    <h3 class="text-center font-weight-light my-4">Login</h3>
+                    <h3 class="text-center font-weight-light my-4">Registration</h3>
                   </div>
                   <div class="card-body">
                     {% with messages = get_flashed_messages() %} {% if messages
@@ -38,21 +38,31 @@
                       {% for message in messages %} {{ message }} {% endfor %}
                     </div>
                     {% endif %} {% endwith %}
-                    <form action="{{ url_for('user.process_login') }}" method="POST">
+                    <form action="{{ url_for('user.process_reg') }}" method="POST">
                       {{ form.hidden_tag() }}
                       <div class="form-group">
                         {{ form.username.label(class_="small mb-1") }}* {{
                         form.username() }}
                       </div>
                       <div class="form-group">
+                        {{ form.firstname.label(class_="small mb-1") }} {{
+                        form.firstname() }}
+                      </div>
+                      <div class="form-group">
+                        {{ form.lastname.label(class_="small mb-1") }} {{
+                        form.lastname() }}
+                      </div>
+                      <div class="form-group">
+                        {{ form.email.label(class_="small mb-1") }}* {{
+                        form.email() }}
+                      </div>
+                      <div class="form-group">
                         {{ form.password.label(class_="small mb-1") }}* {{
                         form.password() }}
                       </div>
                       <div class="form-group">
-                        <div class="custom-control custom-checkbox">
-                          {{ form.remember_me() }} {{
-                          form.remember_me.label(class_="form-check-label") }}
-                        </div>
+                        {{ form.password2.label(class_="small mb-1") }}* {{
+                        form.password2() }}
                       </div>
                       <div
                         class="form-group d-flex align-items-center justify-content-between mt-4 mb-0"
@@ -63,7 +73,7 @@
                   </div>
                   <div class="card-footer text-center">
                     <div class="small">
-                      <a href={{url_for('user.register')}}>Need an account? Sign up!</a>
+                        <a href={{url_for('user.login')}}>Have an account? Go to login</a>
                     </div>
                   </div>
                 </div>

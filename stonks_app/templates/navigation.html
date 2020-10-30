@@ -45,7 +45,7 @@
         aria-haspopup="true"
         aria-expanded="false"
         ><i class="fas fa-user fa-fw"></i
-      ></a>
+      >{{ current_user.username }}</a>
       <div
         class="dropdown-menu dropdown-menu-right"
         aria-labelledby="userDropdown"
@@ -177,7 +177,7 @@
       </div>
       <div class="sb-sidenav-footer">
         <div class="small">Logged in as:</div>
-        PIGA Tester
+        {{ current_user.firstname }} {{ current_user.lastname }}
       </div>
     </nav>
   </div>
