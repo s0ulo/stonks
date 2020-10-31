@@ -11,6 +11,7 @@ documentation = "https://docs.google.com/document/d/1hyo6X5697rYHlifO1heI5EU1dFa
 
 [tool.poetry.dependencies]
 python = "^3.8"
+<<<<<<< HEAD
 Flask = "^1.1"
 plotly = "^4.10"
 requests = "^2.24"
@@ -22,6 +23,17 @@ matplotlib = "^3.3.2"
 statsmodels = "^0.12.0"
 sklearn = "^0.0"
 keras = "^2.4.3"
+=======
+Flask = "1.1.2"
+plotly = "4.11"
+requests = "2.24"
+flask-sqlalchemy = "2.4.4"
+pandas = "1.1.3"
+Flask-Login = "0.5.0"
+Flask-WTF = "0.14.3"
+Flask-Migrate = "2.5.3"
+email-validator = "^1.1.1"
+>>>>>>> 9d20f519328f81014f8896f1771b63d30dc22494
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

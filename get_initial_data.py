@@ -1,6 +1,6 @@
 import requests
 from sqlalchemy.exc import IntegrityError
-from stonks_app.datamodel import (
+from stonks_app.stonk.models import (
     db,
     HistoricalPrices,
     StocksAttributes,

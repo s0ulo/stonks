@@ -4,7 +4,10 @@
 <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 {% endblock %}
 
+{% include 'navigation.html' %}
+
 {% block content %}
+
   <!-- first row with one chart -->
   <div class="row">
     {% for ticker in stock_attr_list %}
@@ -19,7 +22,7 @@
           </div>
           <div class="card-body">
             <!-- Place Plotly chart here -->
-            <h5><a href={{ url_for('plotlygraphs', id=ticker.ticker) }}>
+            <h5><a href={{ url_for('stonk.plotlygraphs', id=ticker.ticker) }}>
               {{ticker.ticker}}</a></h5>    
           </div>
         </div>

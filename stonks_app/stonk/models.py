@@ -1,6 +1,4 @@
-from flask_sqlalchemy import SQLAlchemy
-
-db = SQLAlchemy()
+from stonks_app.db import db
 
 
 class HistoricalPrices(db.Model):

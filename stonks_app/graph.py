@@ -1,4 +1,4 @@
-from stonks_app.datamodel import StocksAttributes, HistoricalPrices
+from stonks_app.stonk.models import StocksAttributes, HistoricalPrices
 import json
 import pandas as pd
 import plotly

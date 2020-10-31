@@ -1,7 +1,184 @@
-<header>
-    <nav>
-        {% for link in nav %}
-        <a href="{{ link.url }}">{{ link.name }}</a>
-        {% endfor %}
+<!-- #region Top Nav Bar -->
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+  <a class="navbar-brand" href="{{ url_for('home') }}"
+    ><i class="fas fa-wine-bottle"></i> Stonks App</a
+  >
+  <button
+    class="btn btn-link btn-sm order-1 order-lg-0"
+    id="sidebarToggle"
+    href="#"
+  >
+    <i class="fas fa-bars"></i>
+  </button>
+
+  <!-- Navbar Search (hidden til back-end developed) -->
+  <form
+    class="d-none d-md-inline-block form-inline ml-auto mr-0 mr-md-3 my-2 my-md-0"
+  >
+    <!-- Temporary hidden search form. Undo `d-none` when ready -->
+    <div class="input-group d-none">
+      <input
+        class="form-control"
+        type="text"
+        placeholder="Search for..."
+        aria-label="Search"
+        aria-describedby="basic-addon2"
+      />
+      <div class="input-group-append">
+        <button class="btn btn-primary" type="button">
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+  </form>
+  <!-- end of Navbar Search form -->
+
+  <!-- User Dropdown Navbar -->
+  <ul class="navbar-nav ml-auto ml-md-0">
+    <li class="nav-item dropdown">
+      <a
+        class="nav-link dropdown-toggle"
+        id="userDropdown"
+        href="#"
+        role="button"
+        data-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        ><i class="fas fa-user fa-fw"></i
+      >{{ current_user.username }}</a>
+      <div
+        class="dropdown-menu dropdown-menu-right"
+        aria-labelledby="userDropdown"
+      >
+        <a class="dropdown-item" href="{{ url_for('user.logout') }}">Logout</a>
+      </div>
+    </li>
+  </ul>
+  <!-- end of User Navbar -->
+</nav>
+<!-- #endregion of Top Nav Bar -->
+
+
+<!-- #region Sidebar Nav -->
+
+<div id="layoutSidenav">
+  <!-- Side Nav Bar Content -->
+  <div id="layoutSidenav_nav">
+    <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+      <div class="sb-sidenav-menu">
+        <!-- Side Nav section -->
+        <div class="nav my-3">
+          <!-- Home (index) link -->
+          <a class="nav-link" href="{{ url_for('home') }}">
+            <div class="sb-nav-link-icon">
+              <i class="fas fa-house-user"></i>
+            </div>
+            Home
+          </a>
+
+          <!-- Dashboard link -->
+          <a class="nav-link" href="dashboard.html">
+            <div class="sb-nav-link-icon">
+              <i class="fas fa-chart-line"></i>
+            </div>
+            Don't Click This
+          </a>
+
+          <!-- Tickers page link -->
+          <a class="nav-link" href="{{ url_for('stonk.tickers') }}">
+            <div class="sb-nav-link-icon">
+              <i class="fas fa-table"></i>
+            </div>
+            Tickers Info
+          </a>
+          <!-- #region Pages -->
+          <!-- 'Pages' collapse menu (hidden) -->
+          <a
+            class="nav-link collapsed d-none"
+            href="#"
+            data-toggle="collapse"
+            data-target="#collapsePages"
+            aria-expanded="false"
+            aria-controls="collapsePages"
+          >
+            <div class="sb-nav-link-icon">
+              <i class="fas fa-book-open"></i>
+            </div>
+            Pages
+            <div class="sb-sidenav-collapse-arrow">
+              <i class="fas fa-angle-down"></i>
+            </div>
+          </a>
+          <div
+            class="collapse"
+            id="collapsePages"
+            aria-labelledby="headingTwo"
+            data-parent="#sidenavAccordion"
+          >
+            <nav
+              class="sb-sidenav-menu-nested nav accordion"
+              id="sidenavAccordionPages"
+            >
+              <a
+                class="nav-link collapsed"
+                href="#"
+                data-toggle="collapse"
+                data-target="#pagesCollapseAuth"
+                aria-expanded="false"
+                aria-controls="pagesCollapseAuth"
+              >
+                Authentication
+                <div class="sb-sidenav-collapse-arrow">
+                  <i class="fas fa-angle-down"></i>
+                </div>
+              </a>
+              <div
+                class="collapse"
+                id="pagesCollapseAuth"
+                aria-labelledby="headingOne"
+                data-parent="#sidenavAccordionPages"
+              >
+                <nav class="sb-sidenav-menu-nested nav">
+                  <a class="nav-link" href="login.html">Login</a>
+                  <a class="nav-link" href="register.html">Register</a>
+                  <a class="nav-link" href="password.html">Forgot Password</a>
+                </nav>
+              </div>
+              <a
+                class="nav-link collapsed"
+                href="#"
+                data-toggle="collapse"
+                data-target="#pagesCollapseError"
+                aria-expanded="false"
+                aria-controls="pagesCollapseError"
+              >
+                Error
+                <div class="sb-sidenav-collapse-arrow">
+                  <i class="fas fa-angle-down"></i>
+                </div>
+              </a>
+              <div
+                class="collapse"
+                id="pagesCollapseError"
+                aria-labelledby="headingOne"
+                data-parent="#sidenavAccordionPages"
+              >
+                <nav class="sb-sidenav-menu-nested nav">
+                  <a class="nav-link" href="401.html">401 Page</a>
+                  <a class="nav-link" href="404.html">404 Page</a>
+                  <a class="nav-link" href="500.html">500 Page</a>
+                </nav>
+              </div>
+            </nav>
+          </div>
+          <!-- end of Pages collapse menu -->
+          <!-- #endregion -->
+        </div>
+      </div>
+      <div class="sb-sidenav-footer">
+        <div class="small">Logged in as:</div>
+        {{ current_user.firstname }} {{ current_user.lastname }}
+      </div>
     </nav>
-</header>
+  </div>
+  <!-- #endregion Sidebar Nav -->
