@@ -26,12 +26,12 @@
         <main>
           <div class="container">
             <div class="row justify-content-center">
-              <div class="col-lg-5">
-                <div class="card shadow-lg border-0 rounded-lg mt-5">
+              <div class="col-lg-7">
+                <div class="card shadow-lg border-0 rounded-lg my-4">
                   <div class="card-header">
-                    <h3 class="text-center font-weight-light my-4">Registration</h3>
+                    <h3 class="text-center font-weight-light my-3">Create Account</h3>
                   </div>
-                  <div class="card-body">
+                  <div class="card-body py-3">
                     {% with messages = get_flashed_messages() %} {% if messages
                     %}
                     <div class="alert alert-danger py-2" role="alert">
@@ -44,28 +44,40 @@
                         {{ form.username.label(class_="small mb-1") }}* {{
                         form.username() }}
                       </div>
-                      <div class="form-group">
-                        {{ form.firstname.label(class_="small mb-1") }} {{
-                        form.firstname() }}
-                      </div>
-                      <div class="form-group">
-                        {{ form.lastname.label(class_="small mb-1") }} {{
-                        form.lastname() }}
+                      <div class="form-row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            {{ form.firstname.label(class_="small mb-1") }} {{
+                            form.firstname() }}
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            {{ form.lastname.label(class_="small mb-1") }} {{
+                            form.lastname() }}
+                          </div>
+                        </div>
                       </div>
                       <div class="form-group">
                         {{ form.email.label(class_="small mb-1") }}* {{
                         form.email() }}
                       </div>
-                      <div class="form-group">
-                        {{ form.password.label(class_="small mb-1") }}* {{
-                        form.password() }}
-                      </div>
-                      <div class="form-group">
-                        {{ form.password2.label(class_="small mb-1") }}* {{
-                        form.password2() }}
+                      <div class="form-row">
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            {{ form.password.label(class_="small mb-1") }}* {{
+                            form.password() }}
+                          </div>
+                        </div>
+                        <div class="col-md-6">
+                          <div class="form-group">
+                            {{ form.password2.label(class_="small mb-1") }}* {{
+                            form.password2() }}
+                          </div>
+                        </div>
                       </div>
                       <div
-                        class="form-group d-flex align-items-center justify-content-between mt-4 mb-0"
+                        class="form-group mb-0"
                       >
                         {{ form.submit() }}
                       </div>

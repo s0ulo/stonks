@@ -7,23 +7,31 @@ import stonks_app.graph
 
 blueprint = Blueprint("stonk", __name__)
 
+
 @blueprint.route("/tickers")
 @login_required
 def tickers():
     """
     Tickers attributes table
     """
-
+    tickers_info = (
+        db.session.query(
+            StocksAttributes.stock_name,
+            StocksAttributes.ticker,
+            StocksAttributes.stock_exchange_name,
+            Sectors.sector_name,
+            Countries.country,
+        )
+        .join(Sectors, StocksAttributes.sector_id == Sectors.id)
+        .join(Countries, StocksAttributes.country_id == Countries.id)
+        .all()
+    )
     return render_template(
         "stonk/tickers.html",
         title="Tickers Information",
         description="This page shows all available ticker attributes just for lulz",
-        #stock_attr_list=StocksAttributes.query.all()
-        stock_attr_list=db.session.query(StocksAttributes.stock_name, 
-        StocksAttributes.ticker, StocksAttributes.stock_exchange_name, 
-        Sectors.sector_name, Countries.country).join(
-            Sectors, StocksAttributes.sector_id == Sectors.id).join(
-                Countries, StocksAttributes.country_id == Countries.id).all()
+        # stock_attr_list=StocksAttributes.query.all()
+        stock_attr_list=tickers_info,
     )
 
 

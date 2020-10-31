@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import BooleanField, StringField, PasswordField, SubmitField
 from wtforms.validators import Email, EqualTo, DataRequired
-import email_validator
 
 
 class LoginForm(FlaskForm):
@@ -75,4 +74,4 @@ class RegistrationForm(FlaskForm):
             "placeholder": "Confirm password",
         },
     )    
-    submit = SubmitField("Register", render_kw={"class": "btn btn-primary"})
+    submit = SubmitField("Create Account", render_kw={"class": "btn btn-primary"})
