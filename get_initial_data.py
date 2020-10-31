@@ -14,11 +14,6 @@ from datetime import datetime
 from top50_stocks import ticker_list  # импортируем список топ 50 компаний
 from flask import current_app
 
-'''link_env = 'sandbox'
-params = {
-        'token': current_app.config['TSK_IEX_TOKEN']
-}'''
-
 
 def get_from_api(tckr, extension):
     """
@@ -219,18 +214,24 @@ def limit_exceeded():
 app = create_app()
 with app.app_context():
 
-    link_env = 'sandbox'
+    link_env = 'cloud'
     params = {
-        'token': current_app.config['TSK_IEX_TOKEN']
+        'token': current_app.config['SK_IEX_TOKEN1']
     }
-    tckrlst = ticker_list
+    tckrlst = ticker_list[19:]
     for ticker in tckrlst:
         if is_limit_exceeded():
             countdown_messages = limit_exceeded()
-            print(f'Превышен лимит запросов, осталось {str(countdown_messages)}')
+            print(
+                f'Превышен лимит запросов, осталось {str(countdown_messages)}'
+                )
             break
         get_historical_prices(ticker)
         get_rest_of_data(ticker)
         countdown_tickers = len(ticker_list) - (ticker_list.index(ticker)) + 1
         countdown_messages = limit_exceeded()
-        print(f"{ticker} data saved, {str(countdown_tickers)} stonks remained, {str(countdown_messages)} messages remained.")
+        print(
+            f"""{ticker} data saved,
+                {str(countdown_tickers)} stonks remained,
+                {str(countdown_messages)} messages remained.
+                """)

@@ -29,7 +29,8 @@ class StocksAttributes(db.Model):
     country_id = db.Column(db.String, nullable=False)
 
     def __repr__(self):
-        return f"<stock_attributes {self.stock_name} {self.ticker} {self.sector_id}>"
+        return f"""<stock_attributes
+             {self.stock_name} {self.ticker} {self.sector_id}>"""
 
 
 class Peers(db.Model):
@@ -64,3 +65,37 @@ class Industries(db.Model):
 
     def __repr__(self):
         return f"<industries {self.industry_name}>"
+
+
+class Forecast(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ticker = db.Column(db.String, nullable=False)
+    date = db.Column(db.DateTime, nullable=False)
+    forecast_date = db.Column(db.DateTime, nullable=False)
+    forecast_price = db.Column(db.Float, nullable=False)
+    model_id = db.Column(db.Integer, nullable=False)
+    db.UniqueConstraint("ticker", "date", "model_id")
+
+    __tablename__ = 'forecasts'
+
+    def __repr__(self):
+        return f"""<Forecasted price for {self.ticker}
+             from {self.forecast_date} to {self.date}
+             was {self.forecast_price}>"""
+
+
+class FcstModel(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    ticker = db.Column(db.String, nullable=False)
+    model_name = db.Column(db.String, nullable=False)
+    arima_p = db.Column(db.Integer, nullable=True)
+    arima_d = db.Column(db.Integer, nullable=True)
+    arima_q = db.Column(db.Integer, nullable=True)
+    date_created = db.Column(db.DateTime, nullable=False)
+    mse = db.Column(db.Float, nullable=False)
+
+    __tablename__ = 'fcst_models'
+
+    def __repr__(self):
+        return f"""<Model {self.model_name},
+             created {self.date_created}, MSE={self.mse}>"""
