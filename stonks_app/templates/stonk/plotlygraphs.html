@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+
+{% block css %}
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% include 'navigation.html' %}
+
+{% block content %}
+<div class="container-fluid my-3">
+  <a href="{{ url_for('home') }}">
+    <i class="fas fa-house-user"></i> go back
+  </a>
+
+  <!-- first row with one chart -->
+  <div class="row">
+    <!-- single candlestick chart area -->
+    <div class="col-12">
+      <!-- First chart area is Bootstrap's CARD element -->
+      <div class="card mb-4">
+        <!-- Chart title (card header) -->
+        <div class="card-header">
+          <i class="fas fa-chart-area mr-1"></i>
+          Candlestick chart for {{ticker_name}} stonks
+        </div>
+        <div class="card-body">
+          <!-- Place Plotly chart here -->
+          <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+          <div class="chart" id="candle">
+            <script>
+              var graphs = {{ candle_plot | safe }};
+              Plotly.plot("candle",graphs,{});
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- second row with one chart -->
+  <div class="row">
+    <!-- single scatter chart area -->
+    <div class="col-12">
+      <div class="card mb-4">
+        <!-- Chart title (card header) -->
+        <div class="card-header">
+          <i class="fas fa-chart-area mr-1"></i>
+          Scatter chart for {{ticker_name}} stonks
+        </div>
+        <div class="card-body">
+          <!-- Place Plotly chart here -->
+          <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+          <div class="chart" id="scatter">
+            <script>
+              var graphs = {{ scatter_plot | safe }};
+              Plotly.plot("scatter",graphs,{});
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- end of scatter chart area -->
+  </div>
+  <!-- end of second row -->
+</div>
+{% endblock %}

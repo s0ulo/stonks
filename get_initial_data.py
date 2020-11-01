@@ -1,6 +1,6 @@
 import requests
 from sqlalchemy.exc import IntegrityError
-from stonks_app.datamodel import (
+from stonks_app.stonk.models import (
     db,
     HistoricalPrices,
     StocksAttributes,
@@ -16,16 +16,13 @@ from top50_stocks import ticker_list  # импортируем список то
 from flask import current_app
 
 
-PARAMS = { 'token': config.TSK_IEX_TOKEN }
-LINK_ENV = 'sandbox'
-
-
 def get_from_api(tckr, extension):
     """
     Дергаем API, сохраняем ответ в `data`
     """
-    api_url = f'https://{LINK_ENV}.iexapis.com/stable/stock/{tckr}/{extension}'
-    data = requests.get(api_url, params=PARAMS)
+    global params, link_env
+    api_url = f"https://{link_env}.iexapis.com/stable/stock/{tckr}/{extension}"
+    data = requests.get(api_url, params=params)
     data.raise_for_status()
     data = data.json()
     return data
@@ -38,7 +35,7 @@ def get_from_api(tckr, extension):
 # поменять УРЛ на https://cloud.iexapis.com/stable/stock/{ticker}/chart/1y
 # поменять токен на SK_IEX_TOKEN
 def get_historical_prices(tckr):
-    extension_for_url = 'chart/1y'
+    extension_for_url = "chart/1y"
     historical_prices = get_from_api(tckr, extension_for_url)
     store_historical_prices(tckr, historical_prices)
 
@@ -73,7 +70,7 @@ def store_historical_prices(tckr, data):
 # поменять УРЛ на https://cloud.iexapis.com/stable/stock/{tckr}/company
 # поменять токен на SK_IEX_TOKEN
 def get_rest_of_data(tckr):
-    extension_for_url = 'company'
+    extension_for_url = "company"
     rest_of_data = get_from_api(tckr, extension_for_url)
     store_countries(rest_of_data)
     store_industries(rest_of_data)
@@ -91,9 +88,16 @@ def store_stock_attrs(tckr, data):
             ticker=tckr,
             stock_exchange_name=data["exchange"],
             country_id=Countries.query.filter(
-                Countries.country == data["country"]).first().id,
+                Countries.country == data["country"]
+            )
+            .first()
+            .id,
             sector_id=Sectors.query.filter(
-                Sectors.sector_name == data["sector"]).first().id)
+                Sectors.sector_name == data["sector"]
+            )
+            .first()
+            .id,
+        )
         db.session.add(stock_attrs)
         db.session.commit()
     except (IntegrityError):
@@ -119,7 +123,11 @@ def store_sectores(data):
         sctrs = Sectors(
             sector_name=data["sector"],
             industry_id=Industries.query.filter(
-                Industries.industry_name == data["industry"]).first().id)
+                Industries.industry_name == data["industry"]
+            )
+            .first()
+            .id,
+        )
         db.session.add(sctrs)
         db.session.commit()
     except (IntegrityError):
@@ -143,7 +151,7 @@ def store_countries(data):
 # поменять УРЛ на https://cloud.iexapis.com/stable/stock/{tckr}/peers
 # поменять токен на SK_IEX_TOKEN
 def get_peers(tckr):
-    extension_for_url = 'peers'
+    extension_for_url = "peers"
     peers_data = get_from_api(tckr, extension_for_url)
     store_peers(tckr, peers_data)
 
@@ -157,18 +165,28 @@ def get_peers(tckr):
 def store_peers(tckr, data):
     for i in data:
         peer_exists = StocksAttributes.query.filter(
-            StocksAttributes.ticker == i).count()
+            StocksAttributes.ticker == i
+        ).count()
         if peer_exists == 1:
             prs = Peers(
-                ticker=tckr, peer_id=StocksAttributes.query.filter(
-                    StocksAttributes.ticker == i).first().id)
+                ticker=tckr,
+                peer_id=StocksAttributes.query.filter(
+                    StocksAttributes.ticker == i
+                )
+                .first()
+                .id,
+            )
             db.session.add(prs)
             db.session.commit()
         else:
             get_rest_of_data(i)
             prs = Peers(
-                ticker=tckr, peer_id=StocksAttributes.query.filter(
-                    StocksAttributes.ticker == i).first().id
+                ticker=tckr,
+                peer_id=StocksAttributes.query.filter(
+                    StocksAttributes.ticker == i
+                )
+                .first()
+                .id,
             )
             db.session.add(prs)
             db.session.commit()
@@ -179,20 +197,26 @@ def store_peers(tckr, data):
 # поменять УРЛ на https://cloud.iexapis.com/stable/account/metadata
 # поменять токен на SK_IEX_TOKEN
 def is_limit_exceeded():
-    metadata_url = f'https://{LINK_ENV}.iexapis.com/stable/account/metadata'
-    messages = requests.get(metadata_url, params=PARAMS).json()
-    messages_left = int(messages['messageLimit']) \
-        - int(messages['messagesUsed'])
-    if messages_left < current_app.config['MESSAGES_FOR_1_TICKER']:
+
+    global params, link_env
+    metadata_url = f"https://{link_env}.iexapis.com/stable/account/metadata"
+    messages = requests.get(metadata_url, params=params).json()
+    messages_left = int(messages["messageLimit"]) - int(
+        messages["messagesUsed"]
+    )
+    if messages_left < current_app.config["MESSAGES_FOR_1_TICKER"]:
         return True
     return False
 
 
 def limit_exceeded():
-    metadata_url = f'https://{LINK_ENV}.iexapis.com/stable/account/metadata'
-    messages = requests.get(metadata_url, params=PARAMS).json()
-    messages_left = int(messages['messageLimit']) \
-        - int(messages['messagesUsed'])
+
+    global params, link_env
+    metadata_url = f"https://{link_env}.iexapis.com/stable/account/metadata"
+    messages = requests.get(metadata_url, params=params).json()
+    messages_left = int(messages["messageLimit"]) - int(
+        messages["messagesUsed"]
+    )
     return messages_left
 
 
@@ -203,14 +227,24 @@ def limit_exceeded():
 # скачивания полной инфы про 1 акцию - прерываем
 app = create_app()
 with app.app_context():
-    tckrlst = ticker_list
+
+    link_env = "cloud"
+    params = {"token": current_app.config["SK_IEX_TOKEN1"]}
+    tckrlst = ticker_list[19:]
     for ticker in tckrlst:
         if is_limit_exceeded():
             countdown_messages = limit_exceeded()
-            print(f'Превышен лимит запросов, осталось {str(countdown_messages)}')
+            print(
+                f"Превышен лимит запросов, осталось {str(countdown_messages)}"
+            )
             break
         get_historical_prices(ticker)
         get_rest_of_data(ticker)
         countdown_tickers = len(ticker_list) - (ticker_list.index(ticker)) + 1
         countdown_messages = limit_exceeded()
-        print(f"{ticker} data saved, {str(countdown_tickers)} stonks remained, {str(countdown_messages)} messages remained.")
+        print(
+            f"""{ticker} data saved,
+                {str(countdown_tickers)} stonks remained,
+                {str(countdown_messages)} messages remained.
+                """
+        )

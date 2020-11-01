@@ -1,17 +1,37 @@
 {% extends 'layout.html' %}
 
 {% block css %}
-<link href="{{ url_for('static', filename='css/home.css') }}" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
 {% endblock %}
 
+{% include 'navigation.html' %}
+
 {% block content %}
-<div class="container">
-    <h1>{{title}}</h1>
-    <p>{{description}}</p>
+
+  <!-- first row with one chart -->
+  <div class="row">
     {% for ticker in stock_attr_list %}
-        <h3><a href={{ url_for('plotlygraphs', id=ticker.ticker) }}>{{ticker.ticker}}</a></h3>
-        <p>{{ticker.stock_name}}</p>
-        <hr/>
+      <!-- single chart area -->
+      <div class="col-xs-12 col-md-4 col-lg-3">
+        <!-- Chart area is Bootstrap's CARD element -->
+        <div class="card mb-4">
+          <!-- Chart title (card header) -->
+          <div class="card-header font-weight-light">
+            <i class="fas fa-chart-area mr-1"></i>
+            {{ticker.stock_name}}
+          </div>
+          <div class="card-body">
+            <!-- Place Plotly chart here -->
+            <h5><a href={{ url_for('stonk.plotlygraphs', id=ticker.ticker) }}>
+              {{ticker.ticker}}</a></h5>    
+          </div>
+        </div>
+      </div>
+      <!-- end of chart area -->
     {% endfor%}
-</div>
+  </div>
+  <!-- end of first row -->
+
 {% endblock %}
+
+
