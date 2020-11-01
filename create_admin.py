@@ -10,7 +10,11 @@ app = create_app()
 with app.app_context():
     username = input("Set admin username: ")
 
-    if User.query.filter(User.username == username).count():
+    number_of_existing_users = User.query.filter(
+        User.username == username
+    ).count()
+    admin_user_exist = number_of_existing_users > 0
+    if admin_user_exist:
         print(f"User `{username}` already exists.\n")
         sys.exit(0)
 

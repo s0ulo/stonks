@@ -18,6 +18,9 @@ from stonks_app.stonk.models import (
 # Меняем названия колонок на такие как базе
 # Кастуем колонку дата в тип даты
 def create_dataframe(ticker):
+    """
+    Docstring
+    """
     df = (
         HistoricalPrices.query.filter(HistoricalPrices.ticker == ticker)
         .with_entities(
@@ -46,18 +49,19 @@ def create_dataframe(ticker):
 
 
 class PrepareDataset:
-    """Класс, который подготавливает датасет.
+    """
+    Класс, который подготавливает датасет.\n
 
-    Аргументы:
-    df - датафрейм (ожидается что придет структура как из нашей БД);
-    train_len - float от 0 до 1, какая часть данных идет в обучение;
+    Аргументы:\n
+    `df` - датафрейм (ожидается что придет структура как из нашей БД);
+    `train_len` - float от 0 до 1, какая часть данных идет в обучение;\n
 
-    Атрибуты:
-    train_data - обучение, numpy.ndarray;
-    test_data - тест, numpy.ndarray.
-    df - датафрейм, полученный на вход;
-    train_len - float от 0 до 1, какая часть данных идет в обучение;
-    test_len - float от 0 до 1, какая часть данных идет в тест."""
+    Атрибуты:\n
+    `train_data` - обучение, numpy.ndarray;
+    `test_data` - тест, numpy.ndarray.
+    `df` - датафрейм, полученный на вход;
+    `train_len` - float от 0 до 1, какая часть данных идет в обучение;
+    `test_len` - float от 0 до 1, какая часть данных идет в тест."""
 
     def __init__(self, df, train_len):
         self.train_len = train_len
@@ -70,6 +74,9 @@ class PrepareDataset:
 
 
 def merge_fcst_with_ds(dataset, predictor):
+    """
+    Docstring
+    """
     predictions = getattr(predictor, "predictions")
     fcst = []
     for i in predictions:
@@ -84,6 +91,9 @@ def merge_fcst_with_ds(dataset, predictor):
 
 
 class PredictorARIMA:
+    """
+    Docstring
+    """
     def __init__(self, train, test, p, d, q):
         self.model_name = "ARIMA"
         self.train = train
@@ -113,6 +123,9 @@ class PredictorARIMA:
 
 
 def store_model(model, tckr):
+    """
+    Docstring
+    """
     model_name = getattr(model, "model_name")
     arima_p = getattr(model, "p")
     arima_d = getattr(model, "d")
@@ -138,6 +151,9 @@ def store_model(model, tckr):
 
 
 def store_fcst(dataset, predictor):
+    """
+    Docstring
+    """
     try:
         forecast_date1 = getattr(predictor, "fcstdate")
         model_id1 = (
@@ -167,21 +183,16 @@ with app.app_context():
         .with_entities(StocksAttributes.ticker)
         .all()
     )
+
     fcstd_tickers_tuple = (
         FcstModel.query.filter(FcstModel.ticker != 0)
         .with_entities(FcstModel.ticker)
         .all()
     )
-    all_tickers_list = []
-    # all_tickers_list = [str(ticker[0]) for ticker in all_tickers_tuple]
-    fcstd_tickers_list = []
-    # fcstd_tickers_list = [str(ticker[0]) for ticker in fcstd_tickers_tuple]
-    for t in all_tickers_tuple:
-        a = str(t[0])
-        all_tickers_list.append(a)
-    for t in fcstd_tickers_tuple:
-        a = str(t[0])
-        fcstd_tickers_list.append(a)
+
+    all_tickers_list = [str(ticker[0]) for ticker in all_tickers_tuple]
+    fcstd_tickers_list = [str(ticker[0]) for ticker in fcstd_tickers_tuple]
+
     tickers_for_fcst = list(set(all_tickers_list) - set(fcstd_tickers_list))
     for t in tickers_for_fcst:
         print(f"starting forecasting for {t}")

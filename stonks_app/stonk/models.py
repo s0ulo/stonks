@@ -77,9 +77,12 @@ class Forecast(db.Model):
     __tablename__ = 'forecasts'
 
     def __repr__(self):
-        return f"""<Forecasted price for {self.ticker}
-             from {self.forecast_date} to {self.date}
-             was {self.forecast_price}>"""
+        repr = (
+            f'<Forecasted price for {self.ticker}'
+            f'from {self.forecast_date} to {self.date}'
+            f'was {self.forecast_price}>'
+        )
+        return repr
 
 
 class FcstModel(db.Model):
