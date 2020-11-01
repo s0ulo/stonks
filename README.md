@@ -35,8 +35,7 @@ curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poet
 ```console
 $ git clone https://github.com/s0ulo/stonks.git
 $ cd stonks
-$ poetry shell
-$ poetry update
+$ poetry install
 ```
 
 ### Run flask app
