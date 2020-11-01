@@ -1,4 +1,4 @@
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 """Initialize Flask Application."""
 from flask import Flask, redirect
@@ -9,6 +9,7 @@ from stonks_app.db import db
 from stonks_app.user.models import User
 from stonks_app.user.views import blueprint as user_blueprint
 from stonks_app.stonk.views import blueprint as stonk_blueprint
+
 
 def create_app():
     """Construct the core application."""
