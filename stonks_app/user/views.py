@@ -4,11 +4,12 @@ from flask_login import (
     logout_user,
     current_user,
 )
-from stonks_app.user.forms import LoginForm, RegistrationForm
-from stonks_app.user.models import User
 from sqlalchemy.exc import IntegrityError
 
 from stonks_app.db import db
+from stonks_app.user.forms import LoginForm, RegistrationForm
+from stonks_app.user.models import User
+from stonks_app.utils import get_redirect_target
 
 blueprint = Blueprint("user", __name__, url_prefix="/")
 
@@ -17,7 +18,7 @@ blueprint = Blueprint("user", __name__, url_prefix="/")
 def login():
     print(current_user)
     if current_user.is_authenticated:
-        return redirect(url_for("home"))
+        return redirect(get_redirect_target())
     title = "Authorization"
     login_form = LoginForm()
     return render_template("user/login.html", page_title=title, form=login_form)
@@ -31,7 +32,7 @@ def process_login():
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             # flash("Authorization success!")
-            return redirect(url_for("home"))
+            return redirect(get_redirect_target())
     flash("Login or password not found!")
     return redirect(url_for("user.login"))
 

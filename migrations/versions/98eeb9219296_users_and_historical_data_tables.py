@@ -66,15 +66,6 @@ def upgrade():
     sa.UniqueConstraint('stock_name'),
     sa.UniqueConstraint('ticker')
     )
-    op.create_table('user',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('username', sa.String(length=50), nullable=True),
-    sa.Column('password_hash', sa.String(length=128), nullable=True),
-    sa.Column('role', sa.String(length=10), nullable=True),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_index(op.f('ix_user_role'), 'user', ['role'], unique=False)
-    op.create_index(op.f('ix_user_username'), 'user', ['username'], unique=True)
     # ### end Alembic commands ###
 
 
