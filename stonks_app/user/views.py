@@ -19,7 +19,7 @@ def login():
     print(current_user)
     if current_user.is_authenticated:
         return redirect(get_redirect_target())
-    title = "Authorization"
+    title = "Stonks App | Login"
     login_form = LoginForm()
     return render_template("user/login.html", page_title=title, form=login_form)
 
@@ -31,16 +31,16 @@ def process_login():
         user = User.query.filter(User.username == form.username.data).first()
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
-            # flash("Authorization success!")
-            return redirect(get_redirect_target())
-    flash("Login or password not found!")
+            flash("Authorization success!", "success")
+            return redirect(url_for("home"))
+    flash("Login or password not found!", "danger")
     return redirect(url_for("user.login"))
 
 
 @blueprint.route("/logout")
 def logout():
     logout_user()
-    flash("Logged out")
+    flash("Logged out", "warning")
     return redirect(url_for("user.login"))
 
 
@@ -73,9 +73,12 @@ def process_reg():
             db.session.commit()
         except IntegrityError:
             db.session.rollback()
-            flash("Registration failed. Username or e-mail already exists.")
+            flash(
+                "Registration failed. Username or e-mail already exists.",
+                "danger",
+            )
             return redirect(url_for("user.register"))
-        flash("Registration completed successfully.")
+        flash("Registration completed successfully!", "success")
         return redirect(url_for("user.login"))
-    flash("Registration failed. Please check registration form.")
+    flash("Registration failed. Please check registration form.", "danger")
     return redirect(url_for("user.register"))
