@@ -1,7 +1,9 @@
 from datetime import datetime
 from flask_login import UserMixin
-from stonks_app.db import db
+from sqlalchemy.orm import relationship
 from werkzeug.security import generate_password_hash, check_password_hash
+
+from stonks_app.db import db
 
 
 class User(db.Model, UserMixin):
@@ -38,3 +40,24 @@ class User(db.Model, UserMixin):
         Returns True or False
         """
         return check_password_hash(self.password_hash, password)
+
+
+class Favourite(db.Model):
+    """
+    Database Model for Users and their personal favourite stonks
+    """
+    id = db.Column(db.Integer, primary_key=True)
+    stock_id = db.Column(
+        db.Integer, db.ForeignKey("stocks_attributes.id", ondelete="CASCADE"), index=True
+    )
+    user_id = db.Column(
+        db.Integer, db.ForeignKey("user.id", ondelete="CASCADE"), index=True
+    )
+
+    ticker = relationship("StocksAttributes", backref="favourites")
+    user = relationship("User", backref="favourites")
+
+    def __repr__(self):
+        return (
+            f"<Favourites pair: User {self.user_id} - Ticker {self.stock_id} >"
+        )
