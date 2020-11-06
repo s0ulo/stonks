@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, url_for
 from flask_login import (
+    login_required,
     login_user,
     logout_user,
     current_user,
@@ -8,7 +9,7 @@ from sqlalchemy.exc import IntegrityError
 
 from stonks_app.db import db
 from stonks_app.user.forms import LoginForm, RegistrationForm
-from stonks_app.user.models import User
+from stonks_app.user.models import User, Favourite
 from stonks_app.utils import get_redirect_target
 
 blueprint = Blueprint("user", __name__, url_prefix="/")
@@ -82,3 +83,21 @@ def process_reg():
         return redirect(url_for("user.login"))
     flash("Registration failed. Please check registration form.", "danger")
     return redirect(url_for("user.register"))
+
+
+@blueprint.route("/favourites")
+@login_required
+def favourites():
+    """
+    Render personal favourites page for current user
+    """
+    favourite_stonks = Favourite.query.filter(
+        Favourite.user_id == current_user.id
+    ).all()
+
+    return render_template(
+        "user/favourites.html",
+        title="Favourite stonks",
+        description=f"Hi, {current_user.username}! This page shows your favourite stonks.",
+        favourites_list=favourite_stonks,
+    )

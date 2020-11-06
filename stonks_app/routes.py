@@ -2,8 +2,6 @@
 
 from flask import current_app as app
 from flask import render_template
-from flask_login import login_required, current_user
-from stonks_app.stonk.models import StocksAttributes
 
 
 @app.errorhandler(404)
@@ -13,13 +11,11 @@ def page_not_found(e):
 
 
 @app.route("/")
-@login_required
 def home():
     """Landing page."""
 
     return render_template(
         "home.html",
-        title="Stonks First Steps Demo",
-        description="Hello! I use page templates with Flask & Jinja.",
-        stock_attr_list=StocksAttributes.query.all(),
+        title="Stonks Apps Demo",
+        description="Hello, everyone! This is Stonks Flask App!",
     )
